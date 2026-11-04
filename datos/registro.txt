@@ -1,0 +1,7 @@
+04/11/2026 16:42:30 importar adoptantes.csv: 5 filas nuevas
+04/11/2026 16:42:30 importar animales.csv: 6 filas nuevas
+04/11/2026 16:43:11 alta de animal 'José': Dado de alta con el número 7
+04/11/2026 16:43:32 cambiar edad del animal 3 a 4000: Edad cambiada
+04/11/2026 16:48:53 adoptar animal 6 (adoptante 6): Rechazado: FOREIGN KEY constraint failed
+04/11/2026 16:53:04 mejores adoptantes con al menos 0: 0
+04/11/2026 16:53:12 mejores adoptantes con al menos 1: 0
