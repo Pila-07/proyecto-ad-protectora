@@ -19,3 +19,5 @@
 06/11/2026 15:11:35 importar animales.csv: 6 filas nuevas
 06/11/2026 15:13:54 importar adoptantes.csv: 0 filas nuevas
 06/11/2026 15:13:54 importar animales.csv: 0 filas nuevas
+06/11/2026 15:49:33 importar adoptantes.csv: 1 filas nuevas
+06/11/2026 15:49:33 importar animales.csv: 0 filas nuevas

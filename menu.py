@@ -15,8 +15,9 @@ import time
 import orm
 import servidor
 from ficheros import DATOS, apuntar, copia_de_seguridad, guardar_json, guardar_xml
+from pathlib import Path
 
-BASE = "protectora.db"
+BASE = str(Path(__file__).resolve().parent / "protectora.db")
 
 MENU = """
 === Protectora de Animales ===

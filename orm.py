@@ -10,6 +10,7 @@ from sqlalchemy import ForeignKey, create_engine, event, func, select, text
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import (DeclarativeBase, Mapped, Session, mapped_column,
                             relationship, selectinload)
+from pathlib import Path
 
 
 class Base(DeclarativeBase):
@@ -36,7 +37,7 @@ class Animal(Base):
     edad: Mapped[int]
     disponible: Mapped[bool] = mapped_column(default=True)
     adopciones: Mapped[list["Adopcion"]] = relationship(back_populates="animal")
-
+    
     def __repr__(self):
         return f"Animal({self.nombre!r})"
 
@@ -51,7 +52,8 @@ class Adopcion(Base):
     animal: Mapped["Animal"] = relationship(back_populates="adopciones")
 
 
-motor = create_engine("sqlite:///protectora.db")
+RUTA = Path(__file__).resolve().parent / "protectora.db"
+motor = create_engine(f"sqlite:///{RUTA.as_posix()}")
 
 
 @event.listens_for(motor, "connect")

@@ -9,11 +9,11 @@ import xml.etree.ElementTree as ET
 from datetime import datetime
 from pathlib import Path
 
-DATOS = Path("datos")
+CARPETA = Path(__file__).resolve().parent      # la carpeta donde está este fichero
+DATOS = CARPETA / "datos"
 DATOS.mkdir(exist_ok=True)
 
-COPIAS = Path("copias")
-
+COPIAS = CARPETA / "copias"
 
 def apuntar(texto):
     """Una línea en el registro de operaciones, con la fecha y la hora."""
