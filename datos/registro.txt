@@ -11,3 +11,11 @@
 04/11/2026 21:01:29 alta de animal 'kjh': Dado de alta con el número 9
 04/11/2026 21:02:15 importar adoptantes.csv: 0 filas nuevas
 04/11/2026 21:02:15 importar animales.csv: 0 filas nuevas
+06/11/2026 15:09:22 importar adoptantes.csv: 0 filas nuevas
+06/11/2026 15:09:22 importar animales.csv: 0 filas nuevas
+06/11/2026 15:09:52 error de la base de datos: no such table: adoptantes
+06/11/2026 15:09:58 error de la base de datos: no such table: adoptantes
+06/11/2026 15:11:35 importar adoptantes.csv: 5 filas nuevas
+06/11/2026 15:11:35 importar animales.csv: 6 filas nuevas
+06/11/2026 15:13:54 importar adoptantes.csv: 0 filas nuevas
+06/11/2026 15:13:54 importar animales.csv: 0 filas nuevas

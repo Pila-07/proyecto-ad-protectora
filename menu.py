@@ -11,7 +11,7 @@ import csv
 import sqlite3
 from contextlib import closing
 from dataclasses import dataclass
-
+import time
 import orm
 import servidor
 from ficheros import DATOS, apuntar, copia_de_seguridad, guardar_json, guardar_xml
@@ -106,7 +106,7 @@ def importar(nombre, sql):
         except (IndexError, ValueError):
             print(f"   {nombre}, línea {numero}: viene mal, la salto")
         except sqlite3.IntegrityError as e:
-            print(f"   {nombre}, línea {numero}: no entra ({e})")
+            print(f"   {nombre}, línea {numero}: no entra o ya esta introducido ({e})")
     print(f"   {nombre}: {nuevas} filas nuevas")
     apuntar(f"importar {nombre}: {nuevas} filas nuevas")
 
@@ -426,11 +426,20 @@ OPCIONES = {"1": opcion_1, "2": opcion_2, "3": opcion_3, "4": opcion_4, "5": opc
 
 
 # ---------------------------------------------------------------- el menú (paso 5)
+esperar =False
 if __name__ == "__main__":
+    
     crear_tablas()
+    
     while True:
+        if esperar == True:
+            time.sleep(2)
+            print("Pulsa ENTER para continuar:")
+            input()
+        esperar=True
         print(MENU)
         opcion = input("Opción: ").strip()
+
         if opcion == "0":
             print("Hasta pronto")
             break
