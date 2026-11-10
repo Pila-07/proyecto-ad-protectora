@@ -9,31 +9,33 @@ deja de estar disponible; si lo devuelven, vuelve a estarlo.
 
 Las tres tablas:
 
-  animales     (la principal: lo que se "gasta")
+  animales
       id, nombre (no se repite), especie, edad, disponible (1 = sí, 0 = ya adoptado)
 
-  adoptantes   (las personas)
+  adoptantes  
       id, nombre, correo (no se repite)
 
-  adopciones   (la que las une: cada operación de la protectora)
-      id, adoptante_id -> adoptantes, animal_id -> animales,
-      devuelto (0 = lo tiene, 1 = ya lo ha devuelto)
+  adopciones  
+      id, adoptante_id(adoptantes), animal_id(animales),
+       devuelto (0 = lo tiene, 1 = ya lo ha devuelto)
 
-Relaciones: un adoptante tiene muchas adopciones y un animal puede tener varias
-(se adopta, se devuelve y se adopta otra vez). Cada adopción es de un adoptante y de
-un animal.
+Relacion Many2Many entre adoptantes y animales, Un adoptante puede adoptar varios animales
+  y un animal puede ser adoptado por varias personas (siempre y cuando lo devuelvan antes)
 
-2. QUÉ NECESITA Y CÓMO SE ARRANCA
+2. REQUISITOS Y MODO DE ARRANQUE
 --------------------------------
-Necesita Python 3.12 (ni el 3.13 ni el 3.14) y tres librerías, que se instalan una
-vez y con internet:
+Python 3.12
+tres librerías:
+      -pgserver: descarga y arranca el servidor PostgreSQL local sin instalarlo aparte.
+      -psycopg: Conecta Python con PostgreSQL para que se comuniquen.
+      -sqlalchemy: el ORM, para trabajar con las tablas como objetos de Python en vez de SQL.
 
-    python -m pip install pgserver "psycopg[binary,pool]" sqlalchemy
+Para instalarlas: python -m pip install pgserver "psycopg[binary,pool]" sqlalchemy
 
 (Si python abre la Microsoft Store, usad  py  en lugar de  python.)
 La carpeta debe estar fuera de OneDrive.
 
-Se arranca desde una terminal, dentro de la carpeta del trabajo:
+Se arranca desde la terminal, dentro de la carpeta del trabajo:
 
     python menu.py
 
@@ -41,21 +43,20 @@ La primera vez, usad la opción 1 para importar los datos de partida.
 
 3. DÓNDE GUARDA CADA COSA
 -------------------------
-  protectora.db          La base SQLite (un fichero). Se crea sola al arrancar.
+  protectora.db          La base SQLite (un fichero). Se crea al arrancar.
   pgdatos/               El servidor PostgreSQL. Se crea sola con la opción 10
-                         (unos 40 MB; se puede borrar, se vuelve a crear).
-  datos/animales.csv     Los animales de partida (nombre;especie;edad).
-  datos/adoptantes.csv   Los adoptantes de partida (nombre;correo).
+                         (se puede borrar, se vuelve a crear).
+  datos/animales.csv     Los animales con los que se empieza (nombre;especie;edad).
+  datos/adoptantes.csv   Los adoptantes con los que se empieza (nombre;correo).
   datos/registro.txt     El registro: una línea con fecha y hora por cada operación.
   datos/informe.json     El informe de adopciones por especie (opción 7).
   datos/informe.xml      El mismo informe en XML (opción 16).
   datos/adopciones_adoptante_N.csv
-                         Las adopciones del adoptante N, para abrir en una hoja de
+                         Las adopciones de un adoptante, para abrir en una hoja de
                          cálculo (opción 12).
   copias/                Las copias de seguridad de la base (opción 17).
 
-Los CSV van separados por ";" y están guardados en UTF-8 (escribirlos en VS Code,
-no en Excel: Excel les pone una marca delante o los deja en ANSI y las tildes salen mal).
+Los CSV van separados por ";" y están guardados en UTF-8
 
 Ficheros del programa:
   menu.py       El menú y todo el SQL a mano (sqlite3).
@@ -69,36 +70,34 @@ Se escribe el número de la opción y Intro. Si algo sale mal, la aplicación lo
 un mensaje y vuelve al menú; no se cierra.
 
  1. Importar los datos de partida (CSV)
-      Lee datos/adoptantes.csv y datos/animales.csv y mete cada fila. Se puede repetir:
-      lo que ya está no se duplica ("no entra") y lo demás se importa.
-      Ejemplo:  adoptantes.csv: 5 filas nuevas / animales.csv: 6 filas nuevas
+      Lee datos/adoptantes.csv y datos/animales.csv y mete cada fila. 
+      Se puede repetir, lo que ya está no se duplica y lo demás se importa.
 
  2. Ver o buscar animales
-      Busca por nombre o por especie; con Intro se ven todos.
-      Ejemplo: escribir  gato  ->  Mimí y Nala, con su edad y si están disponibles.
+      Busca por nombre o por especie, sin diferenciar entre MAYUSCULAS y minusculas.
+      Con Intro se ven todos.
 
  3. Alta de un animal
-      Pide nombre, especie y edad. Ejemplo: Kiwi, Conejo, 2 -> "Dado de alta con el
-      número 7". Si el nombre ya existe o la edad es negativa, lo rechaza.
+      Pide nombre, especie y edad y devuelve su ID. 
+      Si el nombre ya existe o la edad es negativa, lo rechaza.
 
  4. Cambiar la edad de un animal
-      Pide el número del animal y la edad nueva. Ejemplo: 1 y 4 -> "Edad cambiada".
+      Pide el número del animal y la edad nueva.
 
  5. Adoptar un animal
-      Pide el número del adoptante y el del animal (se ven en la 6 y en la 2).
-      Ejemplo: adoptante 1, animal 1 -> "Adoptado". Si el animal ya no está
-      disponible, o no existe, o el adoptante no existe, lo dice y no cambia nada.
+      Muestra y pide el número del adoptante, luego pide el del animal (se ve en la 2) 
 
  6. Ver las adopciones
       Una línea por adopción: número, adoptante, animal y si lo tiene o ya lo devolvió.
+      Si no ha habido ninguna adopcion no mostrara nada
 
- 7. El informe, y guardarlo en JSON
-      Cuántas adopciones ha habido de cada especie, de más a menos, y lo guarda en
+ 7. Crear informe, y guardarlo en JSON
+      Muestra cuántas adopciones ha habido por especie, de mayor a menor, y lo guarda en
       datos/informe.json.
 
  8. Devolver un animal (ORM)
-      Pide el número de la adopción (el de la opción 6). La adopción pasa a devuelta y el
-      animal vuelve a estar disponible. Ejemplo: 1 -> "Devuelto".
+      Pide el número de la adopción (opción 6). La adopción pasa a devuelta y el
+      animal vuelve a estar disponible.
 
  9. Los mejores adoptantes, con SQL a mano (ORM)
       Pide un mínimo de adopciones y enseña los adoptantes que llegan a él.
