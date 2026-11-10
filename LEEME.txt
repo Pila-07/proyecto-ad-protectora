@@ -101,7 +101,6 @@ un mensaje y vuelve al menú; no se cierra.
 
  9. Los mejores adoptantes, con SQL a mano (ORM)
       Pide un mínimo de adopciones y enseña los adoptantes que llegan a él.
-      Ejemplo: 2 -> solo los que han adoptado al menos dos veces.
 
 10. Llevar los animales al servidor (PostgreSQL)
       Arranca PostgreSQL (la primera vez tarda), copia allí los animales y usa una función
@@ -130,7 +129,7 @@ un mensaje y vuelve al menú; no se cierra.
       tiene adopciones" (lo impide la clave ajena).
 
 16. El informe, en XML
-      El mismo informe que la 7, guardado en datos/informe.xml.
+      Crea el mismo informe que la 7 pero en XML, guardado en datos/informe.xml.
 
 17. Copia de seguridad
       Copia protectora.db en la carpeta copias, con la fecha y la hora en el nombre.
@@ -143,7 +142,7 @@ un mensaje y vuelve al menú; no se cierra.
       Enseña el plan de la consulta (EXPLAIN QUERY PLAN). Con el índice sale
       "SEARCH adopciones USING INDEX idx_adopciones_adoptante (adoptante_id=?)".
 
- 0. Salir
+0. Salir
 
 El registro (datos/registro.txt) guarda cada operación, también las que se rechazan:
 
