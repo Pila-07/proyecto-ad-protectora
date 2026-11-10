@@ -355,7 +355,7 @@ def opcion_13():
         print("   Ese adoptante no existe")
         return
     for numero_adopcion, animal, devuelto in filas:
-        print(f"   {numero_adopcion:3d}  {animal:12s} {'devuelto' if devuelto else 'lo tiene'}")
+        print(f"   {numero_adopcion:3d}  {animal:12s} {'devuelto' if devuelto else ' adoptado'}")
     if not filas:
         print("   (ninguna)")
 

@@ -21,3 +21,12 @@
 06/11/2026 15:13:54 importar animales.csv: 0 filas nuevas
 06/11/2026 15:49:33 importar adoptantes.csv: 1 filas nuevas
 06/11/2026 15:49:33 importar animales.csv: 0 filas nuevas
+10/11/2026 16:59:34 importar adoptantes.csv: 0 filas nuevas
+10/11/2026 16:59:34 importar animales.csv: 0 filas nuevas
+10/11/2026 17:00:27 alta de animal 'Gabriel Omar': Dado de alta con el número 10
+10/11/2026 17:00:49 cambiar edad del animal 10 a 26: Edad cambiada
+10/11/2026 17:00:52 importar adoptantes.csv: 0 filas nuevas
+10/11/2026 17:00:52 importar animales.csv: 0 filas nuevas
+10/11/2026 17:02:05 adoptar animal 6 (adoptante 20): Rechazado: FOREIGN KEY constraint failed
+10/11/2026 17:03:03 alta de adoptante 'Robertototototo' (ORM): Dado de alta con el número 7
+10/11/2026 17:03:18 adoptar animal 10 (adoptante 7): Adoptado
