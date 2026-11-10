@@ -27,7 +27,7 @@ MENU = """
  4. Cambiar la edad de un animal
  5. Adoptar un animal
  6. Ver las adopciones
- 7. El informe, y guardarlo en JSON
+ 7. Crear informe, y guardarlo en JSON
  8. Devolver un animal (ORM)
  9. Los mejores adoptantes, con SQL a mano (ORM)
 10. Llevar los animales al servidor (PostgreSQL)
@@ -209,9 +209,27 @@ def adoptar(adoptante_id, animal_id):
         return "Adoptado"
     except sqlite3.IntegrityError as e:
         return f"Rechazado: {e}"
+@dataclass
+class Adoptante:
+    id: int
+    nombre: str
+    correo: str
 
+def mostrar_adoptantes():
+    with closing(conectar()) as cx:
+        filas = cx.execute("SELECT * FROM adoptantes ORDER BY id").fetchall()
+    return [Adoptante(*fila) for fila in filas]
 
 def opcion_5():
+    adoptantes = mostrar_adoptantes()
+
+
+
+    for a in adoptantes:
+       print(f"   {a.id:3d}  {a.nombre:20s} {a.correo:20s} ")
+    if not adoptantes:
+        print("   (ninguno)")
+
     adoptante_id = int(input("Número del adoptante: "))
     animal_id = int(input("Número del animal: "))
     mensaje = adoptar(adoptante_id, animal_id)
@@ -434,7 +452,7 @@ if __name__ == "__main__":
     
     while True:
         if esperar == True:
-            time.sleep(2)
+            time.sleep(1)
             print("Pulsa ENTER para continuar:")
             input()
         esperar=True
