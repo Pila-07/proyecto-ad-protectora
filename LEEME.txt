@@ -144,39 +144,37 @@ un mensaje y vuelve al menú; no se cierra.
 
 0. Salir
 
-El registro (datos/registro.txt) guarda cada operación, también las que se rechazan:
+El registro (datos/registro.txt) guarda cada operación, también las que se rechazan con el siguiente formato:
 
-    04/11/2026 15:33:03 adoptar animal 1 (adoptante 1): Adoptado
-    04/11/2026 15:33:03 adoptar animal 1 (adoptante 2): Ese animal ya no está disponible
+        DD/MM/YYYY hora:min:seg Accion :Resultado
 
 5. LAS TABLAS Y SUS RESTRICCIONES
 ---------------------------------
-  animales
-    id          PRIMARY KEY AUTOINCREMENT: la base le da el número a cada animal.
-    nombre      NOT NULL (el dato es obligatorio) y UNIQUE (no puede haber dos animales
-                con el mismo nombre: así no se confunden al adoptar).
-    especie     NOT NULL: es obligatoria.
-    edad        NOT NULL y CHECK (edad >= 0): un animal no puede tener edad negativa.
-    disponible  NOT NULL, por defecto 1, y CHECK (disponible IN (0, 1)): solo vale sí o no.
-
+  
   adoptantes
     id          PRIMARY KEY AUTOINCREMENT.
     nombre      NOT NULL.
-    correo      NOT NULL y UNIQUE: una persona no se da de alta dos veces.
+    correo      NOT NULL y UNIQUE
+
+  animales
+    id          PRIMARY KEY AUTOINCREMENT: 
+    nombre      NOT NULL  UNIQUE 
+    especie     NOT NULL:
+    edad        NOT NULL y CHECK (edad >= 0): 
+    disponible  NOT NULL (por defecto 1) y CHECK (disponible IN (0, 1)): 
 
   adopciones
     id            PRIMARY KEY AUTOINCREMENT.
-    adoptante_id  NOT NULL y REFERENCES adoptantes(id): no hay adopciones de un adoptante
-                  que no existe.
-    animal_id     NOT NULL y REFERENCES animales(id): no hay adopciones de un animal que
-                  no existe, y no se puede borrar un animal que tiene adopciones.
+    adoptante_id  NOT NULL y REFERENCES adoptantes(id)
+    animal_id     NOT NULL y REFERENCES animales(id)
     devuelto      NOT NULL, por defecto 0, y CHECK (devuelto IN (0, 1)).
 
   Índice idx_adopciones_adoptante sobre adopciones(adoptante_id): las adopciones de un
-  adoptante se buscan mucho (opciones 12, 13 y 19) y así la base no recorre la tabla entera.
+  adoptante se buscan mucho (opciones 12, 13 y 19 las usan) y así la base no recorre la 
+  tabla entera cada vez, sino que consulta al índice.
 
   En SQLite las claves ajenas no se comprueban si no se activan; por eso cada conexión
-  ejecuta PRAGMA foreign_keys = ON (en menu.py y, para el ORM, en orm.py).
+  ejecuta PRAGMA foreign_keys = ON .
   Las tablas se crean con CREATE TABLE IF NOT EXISTS y sin DROP: al arrancar no se pierden
   los datos del cliente.
 
@@ -190,11 +188,12 @@ hace commit, y si salta un error hace rollback de todo.
 
 Devolver (opción 8, con el ORM) también son dos: la adopción pasa a devuelta y el animal
 vuelve a estar disponible. La sesión es la transacción: un solo commit para los dos.
+Si falla a medias, no queda nada a medias.
 
-Si falla a medias, no queda nada a medias. Ejemplo comprobado: adoptar el animal 2
-(Toby) para un adoptante que no existe (el 99). El UPDATE ya se había ejecutado, pero
-el INSERT lo rechaza la clave ajena; la transacción se deshace entera y Toby sigue
-disponible: justo después, otro adoptante pudo adoptarlo sin problema.
+  Por ejemplo: adoptar el animal 2 para un adoptante que no existe .
+  El UPDATE ya se había ejecutado, pero el INSERT lo rechaza la clave ajena;
+  la transacción se deshace entera y animal 2 sigue disponible: justo después,
+  otro adoptante podria adoptarlo sin problema.
 
 7. VENTAJAS E INCONVENIENTES
 ----------------------------
