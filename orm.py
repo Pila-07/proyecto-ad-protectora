@@ -1,10 +1,5 @@
-"""orm.py - Lo del ORM (SQLAlchemy 2.0), sobre la misma base que menu.py.
-
-Parte de las clases del ejemplo 48 (Socio, Libro y Prestamo) cambiando los nombres:
-Adoptante, Animal y Adopcion (la que une, como clase, con sus dos relaciones).
-
-Ni create_all ni drop_all: las tablas ya las crea menu.py (con sus CHECK).
-El ORM solo las mapea: cada clase con el nombre de su tabla y sus columnas.
+"""orm.py - Clase que se dedica a convertir las tablas de la base de datos en 
+clases y objetos de python
 """
 from sqlalchemy import ForeignKey, create_engine, event, func, select, text
 from sqlalchemy.exc import IntegrityError
@@ -12,7 +7,7 @@ from sqlalchemy.orm import (DeclarativeBase, Mapped, Session, mapped_column,
                             relationship, selectinload)
 from pathlib import Path
 
-
+# Definición de clases de la base de datos
 class Base(DeclarativeBase):
     pass
 
@@ -25,11 +20,11 @@ class Adoptante(Base):
     adopciones: Mapped[list["Adopcion"]] = relationship(back_populates="adoptante",
                                                         order_by="Adopcion.id")
 
-    def __repr__(self):
+    def __repr__(self):     #Como se muestra el adoptante por consola
         return f"Adoptante({self.nombre!r})"
 
 
-class Animal(Base):
+class Animal(Base):         
     __tablename__ = "animales"
     id: Mapped[int] = mapped_column(primary_key=True)
     nombre: Mapped[str] = mapped_column(unique=True)
@@ -38,7 +33,7 @@ class Animal(Base):
     disponible: Mapped[bool] = mapped_column(default=True)
     adopciones: Mapped[list["Adopcion"]] = relationship(back_populates="animal")
     
-    def __repr__(self):
+    def __repr__(self):     #Como se muestra el animal por consola
         return f"Animal({self.nombre!r})"
 
 
@@ -52,21 +47,20 @@ class Adopcion(Base):
     animal: Mapped["Animal"] = relationship(back_populates="adopciones")
 
 
-RUTA = Path(__file__).resolve().parent / "protectora.db"
+# Obtención de la ruta de la base de datos SQLite para la creación del objeto motor
+RUTA = Path(__file__).resolve().parent / "protectora.db"    
 motor = create_engine(f"sqlite:///{RUTA.as_posix()}")
 
 
-@event.listens_for(motor, "connect")
+@event.listens_for(motor, "connect")    # Se activa cuando la base de datos se conecta
 def claves_ajenas(conexion, _):
-    conexion.execute("PRAGMA foreign_keys = ON")     # en cada conexión, como en el 48
+    conexion.execute("PRAGMA foreign_keys = ON")    # Activación de claves ajenas
 
 
 # ------------------------------------------------------------ opción 8
+# Registra la devolución de un animal: marca la adopción como devuelta
+# y cambia el estado del animal a disponible dentro de la misma transacción.
 def devolver(numero):
-    """Devolver un animal: la adopción pasa a devuelta y el animal vuelve a estar disponible.
-
-    La sesión ES la transacción: los dos cambios van en el mismo commit.
-    """
     with Session(motor) as s:
         adopcion = s.get(Adopcion, numero)
         if adopcion is None:
@@ -74,7 +68,7 @@ def devolver(numero):
         if adopcion.devuelto:
             return "Esa adopción ya estaba devuelta"
         adopcion.devuelto = True
-        adopcion.animal.disponible = True        # se navega con puntos, sin escribir SQL
+        adopcion.animal.disponible = True       
         try:
             s.commit()
         except IntegrityError as e:
@@ -84,8 +78,9 @@ def devolver(numero):
 
 
 # ------------------------------------------------------------ opción 9
+# Busca los adoptantes que tienen un número mínimo de adopciones
+# mediante una consulta SQL directa y devuelve el total de cada uno.
 def mejores_adoptantes(minimo):
-    """SQL a mano desde la misma sesión, con text() y su parámetro (:minimo)."""
     with Session(motor) as s:
         return s.execute(text("""
             SELECT a.nombre AS adoptante, COUNT(*) AS cuantos
@@ -97,13 +92,9 @@ def mejores_adoptantes(minimo):
 
 
 # ------------------------------------------------------------ opción 13
+# Obtiene el historial de adopciones de una persona cargando todos sus
+# datos de golpe para evitar consultas repetidas a la base de datos.
 def adopciones_de(numero):
-    """Las adopciones de un adoptante, navegando por la relación uno a muchos.
-
-    Devuelve None si el adoptante no existe, o una lista de (número, animal, devuelto).
-    El selectinload trae las adopciones y sus animales de golpe: sin él, cada
-    a.animal sería una consulta más (el problema N+1).
-    """
     with Session(motor) as s:
         adoptante = s.get(Adoptante, numero, options=[
             selectinload(Adoptante.adopciones).selectinload(Adopcion.animal)])
@@ -113,8 +104,9 @@ def adopciones_de(numero):
 
 
 # ------------------------------------------------------------ opción 14
+# Crea y guarda un nuevo adoptante en la base de datos; si el correo
+# está repetido, cancela la operación y devuelve un mensaje de error.
 def alta_adoptante(nombre, correo):
-    """Alta de un adoptante con el ORM: add + commit. Si el correo ya está, IntegrityError."""
     with Session(motor) as s:
         adoptante = Adoptante(nombre=nombre, correo=correo)
         s.add(adoptante)
@@ -127,8 +119,9 @@ def alta_adoptante(nombre, correo):
 
 
 # ------------------------------------------------------------ opción 18
+# Genera un resumen que cuenta cuántas adopciones se han hecho por cada
+# especie de animal, incluyendo las especies que aún no tienen adopciones.
 def informe():
-    """Los grupos de 3: el informe de la opción 7, con select() en vez de SQL."""
     veces = func.count(Adopcion.id)
     consulta = (select(Animal.especie, veces)
                 .outerjoin(Adopcion)
