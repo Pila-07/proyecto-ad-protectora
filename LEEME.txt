@@ -244,7 +244,7 @@ Pruebas hechas a propósito (menu.py con base nueva). Cada una da su mensaje, si
   Opción que no existe (77)                  -> Esa opción no existe
   Letras donde va un número (opción 5, "abc")-> Eso no es un número
   Dato repetido (alta de "Luna")             -> No se puede: UNIQUE constraint failed: animales.nombre
-  Correo repetido (opción 14)                -> pendiente (ver más abajo)
+  Correo repetido (opción 14)                -> No se puede: UNIQUE constraint failed: adoptantes.correo
   Número negativo (alta con edad -1)         -> No se puede: CHECK constraint failed: edad >= 0
   Número negativo (cambiar edad a -3)        -> No se puede: CHECK constraint failed: edad >= 0
   Nombre vacío (opción 3)                    -> El nombre y la especie son obligatorios
@@ -269,15 +269,16 @@ Pruebas hechas a propósito (menu.py con base nueva). Cada una da su mensaje, si
 
 Pruebas de lo que usa el ORM o PostgreSQL (pegar aquí lo que salga al ejecutarlas):
 
-  Opción 8 con una adopción que no existe (99)      -> PENDIENTE
-  Opción 8 con una adopción ya devuelta             -> PENDIENTE
-  Opción 14 con un correo repetido                  -> PENDIENTE
-  Opción 13 con un adoptante que no existe          -> PENDIENTE
-  Opción 18 (¿sale igual que el de la 7?)           -> PENDIENTE
-  Opción 10 dos veces seguidas                      -> PENDIENTE
+  Opción 8 con una adopción que no existe (99)      -> Esa adopción no existe
+  Opción 8 con una adopción ya devuelta             -> Esa adopción ya estaba devuelta
+  Opción 13 con un adoptante que no existe          -> Ese adoptante no existe
+  Opción 18 (¿sale igual que el de la 7?)           -> True
+  Opción 10 dos veces seguidas                      -> No tarda en arrancar la segunda vez,
+                                                       pero sin cambios en los datos 
+                                                       a menos que se alateren manualmente
 
 10. QUIÉN HA HECHO QUÉ
 ----------------------
-  [Nombre 1]: PENDIENTE
-  [Nombre 2]: PENDIENTE
-  [Nombre 3]: PENDIENTE
+  [Alberto Marín]: menu.py
+  [Alejandro Pila]: orm.py
+  [Gabriel Omar]: ficheros.py, servidor.py
